@@ -1,12 +1,11 @@
-
 import os
 import sqlite3
 
 dbExists = os.path.isfile('cronhoteldb.db')
 
-dbcon = sqlite3.connect('cronhoteldb.db')
-with dbcon:
-    cursor = dbcon.cursor()
+dbCon = sqlite3.connect('cronhoteldb.db')
+with dbCon:
+    cursor = dbCon.cursor()
     if not dbExists:
         i = 0
         cursor.execute("CREATE TABLE TaskTimes(TaskId INTEGER PRIMARY KEY NOT NULL,DoEvery INTEGER NOT NULL, NumTimes INTEGER NOT NULL)")
@@ -18,22 +17,17 @@ with dbcon:
             content = config.readlines()
             content = [x.strip() for x in content]
             for line in content:
-                splitline = line.split(',')
-                if splitline[0] == "room":
-                    cursor.execute("INSERT INTO Rooms VALUES (?)",(splitline[1],))
-                    if(len(splitline)>2):
-                        cursor.execute("INSERT INTO Residents VALUES (?,?,?)", (splitline[1],splitline[2],splitline[3],))
+                splitLine = line.split(',')
+                if splitLine[0] == "room":
+                    cursor.execute("INSERT INTO Rooms VALUES (?)", (splitLine[1],))
+                    if len(splitLine) > 2:
+                        cursor.execute("INSERT INTO Residents VALUES (?,?,?)", (splitLine[1], splitLine[2], splitLine[3],))
                 else:
-                    if(len(splitline) == 3):
-                        cursor.execute("INSERT INTO TaskTimes VALUES (?,?,?)", (i,splitline[1],splitline[2],))
-                        cursor.execute("INSERT INTO Tasks VALUES (?,?,?)", (i,splitline[0], 0,))
-                        i= i+1
+                    if len(splitLine) == 3:
+                        cursor.execute("INSERT INTO TaskTimes VALUES (?,?,?)", (i, splitLine[1], splitLine[2],))
+                        cursor.execute("INSERT INTO Tasks VALUES (?,?,?)", (i, splitLine[0], 0,))
+                        i += 1
                     else:
-                        cursor.execute("INSERT INTO TaskTimes VALUES (?,?,?)", (i, splitline[1], splitline[3],))
-                        cursor.execute("INSERT INTO Tasks VALUES (?,?,?)", (i, splitline[0], splitline[2],))
-                        i=i+1
-
-
-
-
-
+                        cursor.execute("INSERT INTO TaskTimes VALUES (?,?,?)", (i, splitLine[1], splitLine[3],))
+                        cursor.execute("INSERT INTO Tasks VALUES (?,?,?)", (i, splitLine[0], splitLine[2],))
+                        i += 1
