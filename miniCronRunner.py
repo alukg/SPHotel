@@ -9,7 +9,10 @@ if os.path.isfile('cronhoteldb.db'):
     seconds = 0
     with dbcon:
         cursor = dbcon.cursor()
-        tasks = cursor.execute("SELECT Tasks.TaskName,Tasks.Parameter FROM Tasks JOIN TaskTimes ON Tasks.TaskId = TaskTimes.TaskId WHERE NumTimes > 0").fetchall()
+        tasks = cursor.execute("""SELECT Tasks.TaskName,Tasks.Parameter
+                                  FROM Tasks JOIN TaskTimes
+                                  ON Tasks.TaskId = TaskTimes.TaskId
+                                  WHERE NumTimes > 0""").fetchall()
         DoEveryList = cursor.execute("SELECT DISTINCT DoEvery FROM TaskTimes").fetchall()
         t0 = time.time()
         for task in tasks:
@@ -22,7 +25,10 @@ if os.path.isfile('cronhoteldb.db'):
             seconds += 1
             for taskTime in DoEveryList:
                 if seconds % taskTime[0] == 0:
-                    tasksToOperate = cursor.execute("SELECT Tasks.TaskName,Tasks.Parameter FROM Tasks JOIN TaskTimes ON Tasks.TaskId = TaskTimes.TaskId WHERE ? % TaskTimes.DoEvery ==0  and NumTimes > 0", (seconds,)).fetchall()
+                    tasksToOperate = cursor.execute("""SELECT Tasks.TaskName,Tasks.Parameter
+                                                       FROM Tasks JOIN TaskTimes
+                                                       ON Tasks.TaskId = TaskTimes.TaskId
+                                                       WHERE ? % TaskTimes.DoEvery ==0  and NumTimes > 0""", (seconds,)).fetchall()
                     for taskToOperate in tasksToOperate:
                         lastTime = hotelWorker.dohoteltask(taskToOperate[0], taskToOperate[1])
                     numRemainTasks = cursor.execute("SELECT sum(NumTimes) FROM TaskTimes").fetchone()

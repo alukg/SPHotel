@@ -8,10 +8,23 @@ with dbCon:
     cursor = dbCon.cursor()
     if not dbExists:
         i = 0
-        cursor.execute("CREATE TABLE TaskTimes(TaskId INTEGER PRIMARY KEY NOT NULL,DoEvery INTEGER NOT NULL, NumTimes INTEGER NOT NULL)")
-        cursor.execute("CREATE TABLE Tasks(TaskId INTEGER REFERENCES TaskTimes(TaskId),TaskName TEXT NOT NULL, Parameter INTEGER)")
-        cursor.execute("CREATE TABLE Rooms(RoomNumber INTEGER PRIMARY KEY NOT NULL)")
-        cursor.execute("CREATE TABLE Residents(RoomNumber INTEGER NOT NULL REFERENCES Rooms(RoomNumber),FirstName TEXT NOT NULL, LastName TEXT NOT NULL)")
+        cursor.execute("""CREATE TABLE TaskTimes(
+                              TaskId INTEGER PRIMARY KEY NOT NULL,
+                              DoEvery INTEGER NOT NULL,
+                              NumTimes INTEGER NOT NULL)""")
+
+        cursor.execute("""CREATE TABLE Tasks(
+                              TaskId INTEGER REFERENCES TaskTimes(TaskId),
+                              TaskName TEXT NOT NULL,
+                              Parameter INTEGER)""")
+
+        cursor.execute("""CREATE TABLE Rooms(
+                              RoomNumber INTEGER PRIMARY KEY NOT NULL)""")
+
+        cursor.execute("""CREATE TABLE Residents(
+                              RoomNumber INTEGER NOT NULL REFERENCES Rooms(RoomNumber),
+                              FirstName TEXT NOT NULL,
+                              LastName TEXT NOT NULL)""")
 
         with open("config.txt") as config:
             content = config.readlines()
