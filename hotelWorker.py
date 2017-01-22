@@ -9,9 +9,9 @@ def dohoteltask(taskname, parameter):
         cursor = dbCon.cursor()
         if dbExists:
             if taskname == "clean":
-                roomsToClean = cursor.execute("Select Rooms.RoomNumber from Rooms EXCEPT SELECT Residents.RoomNumber FROM Residents").fetchall()
+                roomsToClean = cursor.execute("Select Rooms.RoomNumber ASC from Rooms EXCEPT SELECT Residents.RoomNumber FROM Residents").fetchall()
                 if roomsToClean is not None:
-                    print("Rooms"),
+                    print("Rooms ", end="")
                     for room in roomsToClean:
                         if room == roomsToClean[len(roomsToClean)-1]:
                             timeToReturn = round(time.time(), 2)
@@ -19,7 +19,7 @@ def dohoteltask(taskname, parameter):
                             cursor.execute("update TaskTimes set NumTimes = NumTimes-1 Where TaskTimes.TaskId = (select TaskId from Tasks where TaskName='clean')")
                             return timeToReturn
                         else:
-                            print(str(room[0]) + ","),
+                            print(str(room[0]) + ", " ,end=""),
             else:
                 person = cursor.execute("Select FirstName,LastName from Residents Where RoomNumber = ?",(parameter,)).fetchone()
                 if person is not None:
